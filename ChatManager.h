@@ -22,14 +22,22 @@ public:
 
 	bool isServer;
 
+	User* user[MAX_USERS];
+
+	void GetInput();
+	void Update();
+	void Render();
+
+	void ConfigProfile();
+	string GetYourName() { return user[0]->GetName(); }
+	string GetName(int id) { return user[id]->GetName(); }
+
 private:
 	static ChatManager* instance;
 	ChatManager();
 	~ChatManager();
 
-
-	User user[MAX_USERS];
-
+	const string DEFAULT_SERVER_NAME = "SERVER";
 
 public:
 };

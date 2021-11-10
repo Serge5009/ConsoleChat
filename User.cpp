@@ -14,6 +14,16 @@ User::~User()
 {
 }
 
+void User::ConfigureUser()
+{
+	cout << "Please, enter your name: " << endl;
+	cin >> name;
+	//	Color change here later
+
+
+
+}
+
 void User::CoutName()
 {
 	cout << name;

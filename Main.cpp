@@ -1,5 +1,6 @@
 #include <iostream>
 #include "NetworkManager.h"
+#include "ChatManager.h"
 #include <string>
 #include <conio.h>
 
@@ -21,7 +22,21 @@ int main()
 	int userInpurRole = 0;
 	cin >> userInpurRole;
 
-	if (userInpurRole == SERVER)
+	ChatManager::GetInstance();
+
+	if (userInpurRole == SERVER)	//	Initializing ChatManager and setting isServer
+	{
+		ChatManager::GetInstance()->isServer = true;
+	}
+	else
+	{
+		ChatManager::GetInstance()->isServer = false;
+	}
+	ChatManager::GetInstance()->ConfigProfile();	//	We configure only client profile
+
+
+
+	if (ChatManager::GetInstance()->isServer)
 	{
 		int serverPort;
 		cout << "Please, enter your port: " << endl;
@@ -43,14 +58,7 @@ int main()
 		NetworkManager::GetInstance()->ConnectTCP(clientPort, serverIp);
 	}
 
-	/*
-	while (NetworkManager::GetInstance()->GetNumConnections() <= 0)	//	going to endless loop until connect
-	{
-		if (userInpurRole == SERVER)	//	Server tries to accept conection
-		{
-			NetworkManager::GetInstance()->AcceptConnectionTCP();
-		}
-	}*/
+
 
 	//	User message
 	string message;
@@ -59,15 +67,21 @@ int main()
 	string chat;	// This stores all previouse messages to be rendered each frame
 	chat[0] = '\0';
 
-
-
 	bool isRunning = true;
 	char rcvMessage[NetworkManager::MAX_MSG_SIZE];
 
 	while (isRunning)
 	{
+		//	TO DO:	Move code from loop to ChatManager functions
+		ChatManager::GetInstance()->GetInput();
+		ChatManager::GetInstance()->Update();
+		ChatManager::GetInstance()->Render();
+
+
+
+
 		//	Server connection accepting
-		if (userInpurRole == SERVER)	//	Server tries to accept conection
+		if (ChatManager::GetInstance()->isServer)	//	Server tries to accept conection
 		{
 			for (int i = NetworkManager::GetInstance()->GetNumConnections(); i < NetworkManager::MAX_CONNECTIONS; i++)
 			{
@@ -113,7 +127,8 @@ int main()
 				}
 
 				//	save what you just sent
-				chat.append("you:\t\t");
+				chat.append(ChatManager::GetInstance()->GetYourName());
+				chat.append("\t\t");
 				chat.append(message);
 				chat.append("\n\n");
 

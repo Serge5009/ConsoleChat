@@ -24,6 +24,8 @@ public:
 	User(string name);
 	~User();
 
+	void ConfigureUser();
+
 	void SetName(string Name) { name = Name; }
 	string GetName() { return name; }
 
