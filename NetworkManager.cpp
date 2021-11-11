@@ -175,7 +175,7 @@ void NetworkManager::AcceptConnectionTCP(int clientID)	//	Server
 }
 
 
-void NetworkManager::SendDataTCP(const char* data)	
+void NetworkManager::SendDataTCP(const char* data)		//	If client disconects server will crash on data sending
 {
 	for (int i = 0; i < numConnections; i++)	
 	{

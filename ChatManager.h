@@ -1,5 +1,8 @@
 #pragma once
 #include <iostream>
+#include <conio.h>
+
+#include "NetworkManager.h"
 
 #include "User.h"
 
@@ -24,13 +27,15 @@ public:
 
 	User* user[MAX_USERS];
 
-	void GetInput();
-	void Update();
+	int GetInput();
+	int Update();
 	void Render();
 
 	void ConfigProfile();
 	string GetYourName() { return user[0]->GetName(); }
 	string GetName(int id) { return user[id]->GetName(); }
+
+	void SendYourProfile();
 
 private:
 	static ChatManager* instance;
@@ -38,6 +43,12 @@ private:
 	~ChatManager();
 
 	const string DEFAULT_SERVER_NAME = "SERVER";
+
+	string message;
+	string chat;
+
+	char rcvMessage[NetworkManager::MAX_MSG_SIZE];
+
 
 public:
 };
