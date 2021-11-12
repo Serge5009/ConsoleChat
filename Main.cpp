@@ -56,6 +56,8 @@ int main()
 		cin >> serverIp;
 
 		NetworkManager::GetInstance()->ConnectTCP(clientPort, serverIp);
+
+		ChatManager::GetInstance()->SendYourProfile();
 	}
 
 
@@ -79,14 +81,6 @@ int main()
 
 
 
-		//	Server connection accepting
-		if (ChatManager::GetInstance()->isServer)	//	Server tries to accept conection
-		{
-			for (int i = NetworkManager::GetInstance()->GetNumConnections(); i < NetworkManager::MAX_CONNECTIONS; i++)
-			{
-				NetworkManager::GetInstance()->AcceptConnectionTCP(i);
-			}
-		}
 
 
 		

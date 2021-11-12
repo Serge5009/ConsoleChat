@@ -47,7 +47,7 @@ public:
 
 	
 	static const int MAX_MSG_SIZE = 1500;
-	static const int MAX_CONNECTIONS = 4;
+	static const int MAX_CONNECTIONS = 2;
 
 private:
 

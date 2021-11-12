@@ -162,7 +162,7 @@ void NetworkManager::AcceptConnectionTCP(int clientID)	//	Server
 	int results = ioctlsocket(TCPSocketOut[clientID], FIONBIO, &bit2);
 	if (results != NO_ERROR)
 	{	//error message
-		cout << "error for ioctlsocket TCPsocket out" << endl;
+		cout << "error for ioctlsocket TCPsocket out. Error code: " << results << endl;
 	}
 
 

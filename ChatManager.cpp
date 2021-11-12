@@ -10,10 +10,12 @@ ChatManager::ChatManager()
 	message[0] = '\0';
 	chat[0] = '\0';
 	rcvMessage[0] = '\0';
+	numUsers = 0;
 
 	for (int i = 0; i < MAX_USERS; i++)
 	{
 		user[i] = nullptr;
+		
 	}
 }
 
@@ -33,14 +35,15 @@ int ChatManager::GetInput()
 			//	Send the message
 			if (message.length() > 0)
 			{
+				chat.append(ChatManager::GetInstance()->GetYourName());
+				chat.append(":\n");
+				chat.append(message);
+				chat.append("\n\n");
+
+				message.insert(0, "M");
 				NetworkManager::GetInstance()->SendDataTCP(message.c_str());
 			}
 
-			//	save what you just sent
-			chat.append(ChatManager::GetInstance()->GetYourName());
-			chat.append("\t\t");
-			chat.append(message);
-			chat.append("\n\n");
 
 			//	clear our current input
 			message.erase();
@@ -61,18 +64,55 @@ int ChatManager::Update()
 {
 	int errorsN = 0;
 
-
-	for (int i = 0; i < NetworkManager::GetInstance()->GetNumConnections(); i++)
+	if (isServer)
 	{
-		int size = NetworkManager::GetInstance()->ReceiveDataTCP(rcvMessage, i);
-
-		if (size > 0)
+		for (int i = 0; i < NetworkManager::GetInstance()->GetNumConnections(); i++)
 		{
-			chat.append("received:\t");
-			chat.append(rcvMessage);
-			chat.append("\n\n");
+			int size = NetworkManager::GetInstance()->ReceiveDataTCP(rcvMessage, i);
+
+			if (size > 0)
+			{
+				if (rcvMessage[0] == 'P')
+				{
+					AddNewUser(rcvMessage);
+				}
+				if (rcvMessage[0] == 'M')
+				{
+					ReceiveMessage(rcvMessage, i);
+				}
+
+			}
+		}
+
+		//	Server tries to accept connections in background	(he's doing his best o.O)
+		for (int i = NetworkManager::GetInstance()->GetNumConnections(); i < NetworkManager::MAX_CONNECTIONS; i++)
+		{
+			NetworkManager::GetInstance()->AcceptConnectionTCP(i);
+		}
+
+	}
+	else
+	{
+		for (int i = 0; i < NetworkManager::GetInstance()->GetNumConnections(); i++)
+		{
+			int size = NetworkManager::GetInstance()->ReceiveDataTCP(rcvMessage, i);
+
+			if (size > 0)
+			{
+				ReceiveMessage(rcvMessage, i);
+			}
 		}
 	}
+
+
+
+
+
+	
+
+	//	Server connection accepting
+	
+
 
 	return errorsN;
 }
@@ -107,6 +147,53 @@ void ChatManager::ConfigProfile()
 			user[0] = new User;
 		user[0]->SetName(DEFAULT_SERVER_NAME);
 	}
+}
+
+void ChatManager::AddNewUser(char* data)
+{
+	string userData;
+	userData[0] = '\0';
+	userData.append(data);
+
+	userData.erase(0, 1);
+ 	cout << userData;
+
+	for (int i = 0; i < MAX_USERS; i++)
+	{
+		if (user[i] == nullptr)
+		{
+			user[i] = new User;
+			user[i]->SetName(userData);
+			user[i]->socketId = i - 1;
+
+			numUsers++;
+			return;
+		}
+	}
+
+}
+
+void ChatManager::ReceiveMessage(char* data, int id)
+{
+	string messageData;
+	messageData[0] = '\0';
+	messageData.append(data);
+
+	messageData.erase(0, 1);
+
+	string name = "Unknown";
+	for (int i = 0; i <= numUsers; i++)
+	{
+		if(user[i]->socketId == id)
+			chat.append(user[i]->GetName());
+	}
+	chat.append(":\n");
+
+	chat.append(messageData);
+	chat.append("\n\n");
+
+
+
 }
 
 void ChatManager::SendYourProfile()

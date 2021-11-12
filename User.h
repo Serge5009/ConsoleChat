@@ -29,6 +29,7 @@ public:
 	void SetName(string Name) { name = Name; }
 	string GetName() { return name; }
 
+	int socketId;
 	
 	void CoutName();
 

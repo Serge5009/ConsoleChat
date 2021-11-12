@@ -20,12 +20,13 @@ public:
 		return instance;
 	}
 
-	static const int MAX_CONNECTIONS = 4;	//!!!	Must be same as in NetworkManager
+	static const int MAX_CONNECTIONS = 2;	//	Defines maximum clients number
 	static const int MAX_USERS = MAX_CONNECTIONS + 1;
 
 	bool isServer;
 
 	User* user[MAX_USERS];
+	int numUsers;
 
 	int GetInput();
 	int Update();
@@ -34,6 +35,9 @@ public:
 	void ConfigProfile();
 	string GetYourName() { return user[0]->GetName(); }
 	string GetName(int id) { return user[id]->GetName(); }
+
+	void AddNewUser(char* data);
+	void ReceiveMessage(char* data, int id);
 
 	void SendYourProfile();
 
