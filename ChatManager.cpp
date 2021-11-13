@@ -1,4 +1,5 @@
 #include "ChatManager.h"
+#include <string>
 
 ChatManager* ChatManager::instance = nullptr;
 
@@ -35,13 +36,18 @@ int ChatManager::GetInput()
 			//	Send the message
 			if (message.length() > 0)
 			{
-				chat.append(ChatManager::GetInstance()->GetYourName());
-				chat.append(":\n");
-				chat.append(message);
-				chat.append("\n\n");
+				if (isServer)
+				{
+					chat.append(ChatManager::GetInstance()->GetYourName());
+					chat.append("\n");
+					chat.append(message);
+					chat.append("\n\n");
+				}
 
-				message.insert(0, "M");
-				NetworkManager::GetInstance()->SendDataTCP(message.c_str());
+				SendTextMessage(message);
+
+				//message.insert(0, "M");
+				//NetworkManager::GetInstance()->SendDataTCP(message.c_str());
 			}
 
 
@@ -72,14 +78,34 @@ int ChatManager::Update()
 
 			if (size > 0)
 			{
+				ReceiveMessage(rcvMessage);
+
+
+				/*
+				string* forward = new string;
+				forward[0] = '\0';
+				forward->append(rcvMessage);
+				SendTextMessage(*forward);*/
+
+
+				/*
 				if (rcvMessage[0] == 'P')
 				{
-					AddNewUser(rcvMessage);
+
+					SendProfile(AddNewUser(rcvMessage), i);
 				}
 				if (rcvMessage[0] == 'M')
 				{
 					ReceiveMessage(rcvMessage, i);
-				}
+					string forwardMsg = rcvMessage;
+					string userNum;
+					userNum += to_string(i);
+					userNum += 'E';
+					
+					forwardMsg.insert(1, userNum);
+					NetworkManager::GetInstance()->SendDataTCP(forwardMsg.c_str());
+
+				}*/
 
 			}
 		}
@@ -99,20 +125,10 @@ int ChatManager::Update()
 
 			if (size > 0)
 			{
-				ReceiveMessage(rcvMessage, i);
+				ReceiveMessage(rcvMessage);
 			}
 		}
 	}
-
-
-
-
-
-	
-
-	//	Server connection accepting
-	
-
 
 	return errorsN;
 }
@@ -149,14 +165,14 @@ void ChatManager::ConfigProfile()
 	}
 }
 
-void ChatManager::AddNewUser(char* data)
+
+int ChatManager::AddNewUser(char* data)
 {
 	string userData;
 	userData[0] = '\0';
 	userData.append(data);
 
 	userData.erase(0, 1);
- 	cout << userData;
 
 	for (int i = 0; i < MAX_USERS; i++)
 	{
@@ -167,43 +183,134 @@ void ChatManager::AddNewUser(char* data)
 			user[i]->socketId = i - 1;
 
 			numUsers++;
-			return;
+			return i;
 		}
 	}
 
 }
 
-void ChatManager::ReceiveMessage(char* data, int id)
+int ChatManager::AddNewUser()
 {
-	string messageData;
-	messageData[0] = '\0';
-	messageData.append(data);
+	user[1] = new User;
+	user[1]->SetName(DEFAULT_SERVER_NAME);
+	user[1]->socketId = 0;
 
-	messageData.erase(0, 1);
+	return 0;
+}
 
-	string name = "Unknown";
-	for (int i = 0; i <= numUsers; i++)
+void ChatManager::ReceiveMessage(char* data)
+{
+	if (isServer)
 	{
-		if(user[i]->socketId == id)
-			chat.append(user[i]->GetName());
+		NetworkManager::GetInstance()->SendDataTCP(data);	//	Server forwards the message before processing it
+
+		DataToSend* receivedData = new DataToSend;
+		receivedData = reinterpret_cast<DataToSend*>(data);
+
+		chat.append(receivedData->userName);
+		chat.append(":\n");
+		chat.append(receivedData->message);
+		chat.append("\n\n");
+
+		/*
+		string messageData;
+		messageData[0] = '\0';
+		messageData.append(data);
+
+		messageData.erase(0, 1);
+
+		string name = "Unknown";
+		for (int i = 0; i <= numUsers; i++)
+		{
+			if (user[i]->socketId == id)
+				chat.append(user[i]->GetName());
+		}
+		chat.append(":\n");
+
+		chat.append(messageData);
+		chat.append("\n\n");*/
 	}
-	chat.append(":\n");
+	else
+	{
+		DataToSend* receivedData = new DataToSend;
+		receivedData = reinterpret_cast<DataToSend*>(data);
 
-	chat.append(messageData);
-	chat.append("\n\n");
+		chat.append(receivedData->userName);
+		chat.append(":\n");
+		chat.append(receivedData->message);
+		chat.append("\n\n");
 
+
+
+
+
+		/*
+		string messageData;
+		messageData[0] = '\0';
+		messageData.append(data);
+
+		messageData.erase(0, 1);
+		
+
+		//	Getting the sender ID
+		bool isIdExtracted = false;
+		string ID;
+
+		for (int i = 0; i < messageData.size() && !isIdExtracted; i++)
+		{
+			if (messageData[i] == 'E')
+			{
+				isIdExtracted = true;
+			}
+			else
+			{
+				ID += messageData[i];
+			}
+			messageData.erase(0, 1);
+			i--;
+		}
+
+
+		id = atoi(ID.c_str());
+
+
+		string name = "Unknown";
+		for (int i = 0; i <= numUsers; i++)
+		{
+			if (user[i]->socketId == id)
+				chat.append(user[i]->GetName());
+		}
+		chat.append(":\n");
+
+		chat.append(messageData);
+		chat.append("\n\n");*/
+	}
 
 
 }
 
-void ChatManager::SendYourProfile()
+void ChatManager::SendTextMessage(string messageToSend)
+{
+	DataToSend* data = new DataToSend;
+	data->userName = user[0]->GetName();
+	//data->userColor =		//	prefered color
+	//data->userMessageColor =		//	prefered color
+	data->message = messageToSend;
+
+	char* messageBuffer = new char[sizeof(data)];
+	messageBuffer = reinterpret_cast<char*>(data);
+
+	NetworkManager::GetInstance()->SendDataTCP(messageBuffer);
+}
+
+void ChatManager::SendProfile(int userId, int ignoreId)
 {
 	string profileToSend = "P";
 
-	profileToSend.append(user[0]->GetName());
+	profileToSend.append(user[userId]->GetName());
 
 
-	NetworkManager::GetInstance()->SendDataTCP(profileToSend.c_str());
+	NetworkManager::GetInstance()->SendDataTCP(profileToSend.c_str(), ignoreId);
 }
 
 

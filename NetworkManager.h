@@ -38,6 +38,7 @@ public:
 
 		//	BOTH
 	void SendDataTCP(const char* data);
+	void SendDataTCP(const char* data, int idToIgnore);
 	int ReceiveDataTCP(char* ReceiveBuffer, int connectionID);
 
 	void SetRemoteData();	

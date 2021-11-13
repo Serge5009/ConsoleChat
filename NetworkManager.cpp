@@ -155,23 +155,25 @@ void NetworkManager::AcceptConnectionTCP(int clientID)	//	Server
 
 		cout << ipConnected << " - Connected!" << endl;
 		numConnections++;
+
+		unsigned long bit2 = 1;
+		int results = ioctlsocket(TCPSocketOut[clientID], FIONBIO, &bit2);
+		if (results != NO_ERROR)
+		{	//error message
+			cout << "error for ioctlsocket TCPsocket out. Error code: " << results << endl;
+		}
+
+
+		unsigned long bit = 1;
+		results = ioctlsocket(TCPSocketIn, FIONBIO, &bit);
+		if (results != NO_ERROR)
+		{	//error message
+			cout << "error for ioctlsocket TCPsocket in" << endl;
+		}
+
 	}
 
 
-	unsigned long bit2 = 1;
-	int results = ioctlsocket(TCPSocketOut[clientID], FIONBIO, &bit2);
-	if (results != NO_ERROR)
-	{	//error message
-		cout << "error for ioctlsocket TCPsocket out. Error code: " << results << endl;
-	}
-
-
-	unsigned long bit = 1;
-	results = ioctlsocket(TCPSocketIn, FIONBIO, &bit);
-	if (results != NO_ERROR)
-	{	//error message
-		cout << "error for ioctlsocket TCPsocket in" << endl;
-	}
 }
 
 
@@ -179,6 +181,32 @@ void NetworkManager::SendDataTCP(const char* data)		//	If client disconects serv
 {
 	for (int i = 0; i < numConnections; i++)	
 	{
+		int totalByteSent = send(TCPSocketOut[i], data, MAX_MSG_SIZE, 0);
+
+		if (totalByteSent == SOCKET_ERROR)
+		{
+			int error = WSAGetLastError();
+			if (error == WSAEWOULDBLOCK)
+			{
+				// Not a problem, keep going
+				cout << "Sent the data across: " << data << "\nsize was: " << totalByteSent << endl;
+			}
+			else
+			{	//error message
+				cout << "Error, TCP failed to send message" << endl;
+				Shutdown();
+			}
+		}
+	}
+}
+
+void NetworkManager::SendDataTCP(const char* data, int idToIgnore)
+{
+	for (int i = 0; i < numConnections; i++)
+	{
+		if (i == idToIgnore)
+			continue;
+
 		int totalByteSent = send(TCPSocketOut[i], data, MAX_MSG_SIZE, 0);
 
 		if (totalByteSent == SOCKET_ERROR)

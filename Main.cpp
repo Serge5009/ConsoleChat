@@ -4,6 +4,23 @@
 #include <string>
 #include <conio.h>
 
+//	This is the TCP chat app
+//	
+//	Known issues:
+//	
+//		-Server displays error for ioctlsocket TCPsocket out until full
+//		-Disconected users cause server crash
+//		-Server crash causes all clients crash
+// 
+//		-Client-side user managment doesn't work
+//			*Problems with name displaying on client
+//	
+//	Notes:
+// 
+//		-All user-inputed ports & IPs are hardcoded to change back to default
+//		it is made to save some time on testing
+//
+
 
 using namespace std;
 
@@ -57,7 +74,10 @@ int main()
 
 		NetworkManager::GetInstance()->ConnectTCP(clientPort, serverIp);
 
-		ChatManager::GetInstance()->SendYourProfile();
+		//ChatManager::GetInstance()->SendProfile(0, -1);	//	Send your profile to server
+
+		//ChatManager::GetInstance()->AddNewUser();
+
 	}
 
 

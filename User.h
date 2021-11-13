@@ -5,9 +5,12 @@ using namespace std;
 
 enum Color
 {
+
 	RED,
 	GREEN,
 	BLUE,
+	BLACK,
+	WHITE,
 
 	NUM_COLOR
 };

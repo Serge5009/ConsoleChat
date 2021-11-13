@@ -3,6 +3,7 @@
 #include <conio.h>
 
 #include "NetworkManager.h"
+#include "DataToSend.h"
 
 #include "User.h"
 
@@ -36,10 +37,13 @@ public:
 	string GetYourName() { return user[0]->GetName(); }
 	string GetName(int id) { return user[id]->GetName(); }
 
-	void AddNewUser(char* data);
-	void ReceiveMessage(char* data, int id);
 
-	void SendYourProfile();
+	int AddNewUser(char* data);
+	int AddNewUser();	//	client to add server as a user
+	void ReceiveMessage(char* data);
+	void SendTextMessage(string messageToSend);
+
+	void SendProfile(int userId, int ignoreId);
 
 private:
 	static ChatManager* instance;
