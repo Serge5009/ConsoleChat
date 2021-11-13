@@ -9,6 +9,11 @@ enum Color
 	RED,
 	GREEN,
 	BLUE,
+	YELLOW,
+	PURPLE,
+	PINK,
+	CYAN,
+	GRAY,
 	BLACK,
 	WHITE,
 

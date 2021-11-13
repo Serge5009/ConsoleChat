@@ -26,7 +26,7 @@ public:
 
 	bool isServer;
 
-	User* user[MAX_USERS];
+	User* user[MAX_USERS];	//	Now only 1 user is used by each instance of a programm
 	int numUsers;
 
 	int GetInput();
@@ -34,30 +34,22 @@ public:
 	void Render();
 
 	void ConfigProfile();
-	string GetYourName() { return user[0]->GetName(); }
 	string GetName(int id) { return user[id]->GetName(); }
 
-
-	int AddNewUser(char* data);
-	int AddNewUser();	//	client to add server as a user
 	void ReceiveMessage(char* data);
 	void SendTextMessage(string messageToSend);
-
-	void SendProfile(int userId, int ignoreId);
 
 private:
 	static ChatManager* instance;
 	ChatManager();
 	~ChatManager();
 
-	const string DEFAULT_SERVER_NAME = "SERVER";
 
 	string message;
 	string chat;
 
 	char rcvMessage[NetworkManager::MAX_MSG_SIZE];
 
-
-public:
+	const string DEFAULT_SERVER_NAME = "SERVER";
 };
 

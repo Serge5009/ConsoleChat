@@ -73,11 +73,6 @@ int main()
 		cin >> serverIp;
 
 		NetworkManager::GetInstance()->ConnectTCP(clientPort, serverIp);
-
-		//ChatManager::GetInstance()->SendProfile(0, -1);	//	Send your profile to server
-
-		//ChatManager::GetInstance()->AddNewUser();
-
 	}
 
 
@@ -98,15 +93,9 @@ int main()
 		errorCount += ChatManager::GetInstance()->Update();
 		ChatManager::GetInstance()->Render();
 
-
-
-
-
-
-		
-
 		Sleep(30);
 	}
+
 	NetworkManager::GetInstance()->Shutdown();
 
 	return 0;

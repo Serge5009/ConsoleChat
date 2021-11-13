@@ -46,24 +46,6 @@ void NetworkManager::Init()
 	}
 }
 
-void  NetworkManager::CreateUDPSockets()
-{
-	UDPSocketIn = socket(AF_INET, SOCK_DGRAM, 0);
-
-	if (UDPSocketIn == INVALID_SOCKET)
-	{	//error message
-		cout << "Failed to create the inbound socket" << endl;
-		Shutdown();
-	}
-
-	UDPSocketOut = socket(AF_INET, SOCK_DGRAM, 0);
-
-	if (UDPSocketOut == INVALID_SOCKET)
-	{	//error message
-		cout << "Failed to create the Outbound socket" << endl;
-		Shutdown();
-	}
-}
 
 void  NetworkManager::CreateTCPSockets()
 {
@@ -172,7 +154,6 @@ void NetworkManager::AcceptConnectionTCP(int clientID)	//	Server
 		}
 
 	}
-
 
 }
 
@@ -299,6 +280,23 @@ void NetworkManager::Shutdown()
 /// 
 ///			UDP part (OLD)
 /// 
+
+void  NetworkManager::CreateUDPSockets()
+{
+	UDPSocketIn = socket(AF_INET, SOCK_DGRAM, 0);
+	if (UDPSocketIn == INVALID_SOCKET)
+	{	//error message
+		cout << "Failed to create the inbound socket" << endl;
+		Shutdown();
+	}
+
+	UDPSocketOut = socket(AF_INET, SOCK_DGRAM, 0);
+	if (UDPSocketOut == INVALID_SOCKET)
+	{	//error message
+		cout << "Failed to create the Outbound socket" << endl;
+		Shutdown();
+	}
+}
 
 void NetworkManager::BindUDP()
 {
