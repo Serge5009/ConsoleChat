@@ -24,9 +24,12 @@ class User
 {
 private:
 	string name;
-	//Color color;
+
 
 public:
+
+	Color color;
+	Color msgColor;
 
 	User();
 	User(string name);

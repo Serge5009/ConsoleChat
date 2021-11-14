@@ -49,7 +49,7 @@ int main()
 	{
 		ChatManager::GetInstance()->isServer = false;
 	}
-	ChatManager::GetInstance()->ConfigProfile();	//	We configure only client profile
+	ChatManager::GetInstance()->ConfigProfile();	
 
 
 

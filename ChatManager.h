@@ -39,6 +39,8 @@ public:
 	void ReceiveMessage(char* data);
 	void SendTextMessage(string messageToSend);
 
+	string colorCode[NUM_COLOR];
+
 private:
 	static ChatManager* instance;
 	ChatManager();
@@ -51,5 +53,6 @@ private:
 	char rcvMessage[NetworkManager::MAX_MSG_SIZE];
 
 	const string DEFAULT_SERVER_NAME = "SERVER";
+
 };
 

@@ -1,6 +1,7 @@
 #include "ChatManager.h"
 #include <string>
 
+
 ChatManager* ChatManager::instance = nullptr;
 
 ChatManager::ChatManager()
@@ -18,6 +19,20 @@ ChatManager::ChatManager()
 		user[i] = nullptr;
 		
 	}
+
+	colorCode[RED] = "\033[31m";
+	colorCode[GREEN] = "\033[32m";
+	colorCode[BLUE] = "\033[34m";
+	colorCode[YELLOW] = "\033[33m";
+	colorCode[PURPLE] = "\033[35m";
+	colorCode[PINK] = "\033[95m";
+	colorCode[CYAN] = "\033[36m";
+	colorCode[GRAY] = "\033[90m";
+
+	colorCode[BLACK] = "\033[30m";
+	colorCode[WHITE] = "\033[37m";
+
+
 }
 
 
@@ -38,10 +53,19 @@ int ChatManager::GetInput()
 			{
 				if (isServer)
 				{
+
+					chat.append(colorCode[user[0]->color]);		//	Swithcing to new color
 					chat.append(ChatManager::GetInstance()->GetName(0));
 					chat.append("\n");
+					chat.append(colorCode[WHITE]);				//	Swithcing back to white
+
+
+					chat.append(colorCode[user[0]->msgColor]);	//	Swithcing to new color
 					chat.append(message);
 					chat.append("\n\n");
+					chat.append(colorCode[WHITE]);				//	Swithcing back to white
+
+
 				}
 				SendTextMessage(message);
 			}
@@ -130,6 +154,8 @@ void ChatManager::ConfigProfile()
 		if (user[0] == nullptr)
 			user[0] = new User;
 		user[0]->SetName(DEFAULT_SERVER_NAME);
+		user[0]->color = PURPLE;
+		user[0]->msgColor = RED;
 	}
 }
 
@@ -143,10 +169,15 @@ void ChatManager::ReceiveMessage(char* data)
 	DataToSend* receivedData = new DataToSend;
 	receivedData = reinterpret_cast<DataToSend*>(data);
 
+	chat.append(colorCode[receivedData->userColor]);		//	Swithcing to new color
 	chat.append(receivedData->userName);
 	chat.append(":\n");
+	chat.append(colorCode[WHITE]);							//	Swithcing back to white
+
+	chat.append(colorCode[receivedData->userMessageColor]);	//	Swithcing to new color
 	chat.append(receivedData->message);
 	chat.append("\n\n");
+	chat.append(colorCode[WHITE]);							//	Swithcing back to white
 
 	//delete receivedData;
 }
@@ -155,8 +186,8 @@ void ChatManager::SendTextMessage(string messageToSend)
 {
 	DataToSend* data = new DataToSend;
 	data->userName = user[0]->GetName();
-	//data->userColor =		//	prefered color
-	//data->userMessageColor =		//	prefered color
+	data->userColor = user[0]->color;
+	data->userMessageColor = user[0]->msgColor;
 	data->message = messageToSend;
 
 	char* messageBuffer = new char[sizeof(data)];
