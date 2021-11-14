@@ -130,11 +130,11 @@ void ChatManager::Render()
 	system("CLS");	//	Cleare screen at the beginnign of the frame
 	if (isServer)
 	{
-		cout << "SERVER" << "\tConnections: " << NetworkManager::GetInstance()->GetNumConnections() << endl;
+		cout << colorCode[RED] << "SERVER" << colorCode[WHITE] << "\tConnections: " << NetworkManager::GetInstance()->GetNumConnections() << endl;
 	}
 	else
 	{
-		cout << "CLIENT" << endl;
+		cout << "CLIENT - " << colorCode[user[0]->color] << user[0]->GetName() << colorCode[WHITE] << endl;
 	}
 
 	cout << chat << endl;

@@ -8,19 +8,35 @@
 //	
 //	Known issues:
 //	
-//		-Server displays error for ioctlsocket TCPsocket out until full
-//		-Disconected users cause server crash
+// 		-Disconected users cause server crash
 //		-Server crash causes all clients crash
+//		-Longer messages cause server to crash
 // 
-//		-Client-side user managment doesn't work
-//			*Problems with name displaying on client
-//	
 //	Notes:
 // 
 //		-All user-inputed ports & IPs are hardcoded to change back to default
 //		it is made to save some time on testing
 //
-
+// 
+//	Assignment report:
+// 
+//	Majors:
+//	1 - Done
+//	2 - Done
+// 
+//	Minors:
+// 
+//	1 - Colors
+//		done for 2 types (message & username colors), displayed to all clients and server properly
+// 
+//	3 - Message forwarding to all clients 
+//		works good, but all profile info with colors is sent with each message that can affect performance 
+// 
+//	4 - Object serializtion
+//		done, we send each message as an object that contains username, colors and message content
+//		(in future some optimization can help to move DataToSend object functionality to User object)
+// 
+//
 
 using namespace std;
 

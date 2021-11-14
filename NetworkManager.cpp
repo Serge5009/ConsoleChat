@@ -74,7 +74,8 @@ void  NetworkManager::CreateTCPSockets()
 
 void NetworkManager::BindTCP(int port)	//	Server
 {
-	port = 7777;
+	//hardcoded values
+	//port = 7777;
 
 
 	TCPinAddr.sin_family = AF_INET;
@@ -98,8 +99,9 @@ void NetworkManager::ListenTCP()	//	Server
 
 void NetworkManager::ConnectTCP(int port, string ip)	//	Client
 {
-	port = 7777;
-	ip = "127.0.0.1";
+	//hardcoded values
+	//port = 7777;
+	//ip = "127.0.0.1";
 	
 	TCPoutAddr[0].sin_family = AF_INET;
 	TCPoutAddr[0].sin_port = htons(port);
